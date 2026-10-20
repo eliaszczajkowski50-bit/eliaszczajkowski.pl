@@ -34,6 +34,7 @@
 
   const seoLinks={
     'uslugi.html#wycena-firmy':'wycena-firmy.html',
+    'uslugi.html#aktywa-niematerialne':'wycena-znaku-towarowego.html',
     'uslugi.html#analiza-finansowa':'analiza-finansowa.html',
     'uslugi.html#finanse-w-sporcie':'finanse-w-sporcie.html',
     'uslugi.html#wycena-klubow-sportowych':'wycena-klubow-sportowych.html'
