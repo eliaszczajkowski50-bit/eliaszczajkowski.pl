@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://eliaszczajkowski.pl/</loc></url>
-<url><loc>https://eliaszczajkowski.pl/uslugi.html</loc></url>
-<url><loc>https://eliaszczajkowski.pl/polityka-prywatnosci.html</loc></url>
+  <url><loc>https://eliaszczajkowski.pl/</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://eliaszczajkowski.pl/uslugi.html</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://eliaszczajkowski.pl/wycena-firmy.html</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://eliaszczajkowski.pl/analiza-finansowa.html</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://eliaszczajkowski.pl/finanse-w-sporcie.html</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://eliaszczajkowski.pl/wycena-klubow-sportowych.html</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://eliaszczajkowski.pl/polityka-prywatnosci.html</loc><lastmod>2026-10-20</lastmod></url>
 </urlset>
