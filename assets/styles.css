@@ -25,3 +25,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
  .modal-card{max-height:calc(100dvh - 24px)}
  .modal-card .btn-primary{min-height:48px}
 }
+
+/* Mobile-first enquiry controls and unobtrusive privacy settings access */
+.hero-call{display:none}
+.hero-actions .btn:focus-visible,.hero-call:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:640px){
+  .hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hero-actions .btn{font-size:14px;line-height:1.25;text-align:center;padding:13px 10px;min-height:48px}
+  .hero-call{display:flex;grid-column:1 / -1;align-items:center;justify-content:center;min-height:44px;color:#fff;font-size:15px;font-weight:650;text-decoration:underline;text-underline-offset:4px}
+  .hero h2{font-size:23px;line-height:1.25}
+  .hero-copy{padding:32px 0 28px}
+  .hero-copy p{margin-bottom:18px}
+  .hero h1{font-size:clamp(34px,10vw,40px)}
+  #privacy-settings-button{position:static!important;left:auto!important;bottom:auto!important;z-index:auto!important;margin-top:8px!important;box-shadow:none!important}
+  .footer-row{align-items:center}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .btn,.card{transition:none!important;transform:none!important}
+}
