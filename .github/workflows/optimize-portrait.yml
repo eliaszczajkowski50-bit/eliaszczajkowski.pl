@@ -38,7 +38,7 @@ jobs:
               resized.save(out, format='WEBP', quality=88, method=6)
               print(f'{out}: {out.stat().st_size} bytes')
               avif = folder / f'eliasz-portret-{width}.avif'
-              resized.save(avif, format='AVIF', quality=75, speed=5)
+              resized.save(avif, format='AVIF', quality=65, speed=5)
               print(f'{avif}: {avif.stat().st_size} bytes')
           PY
       - name: Commit responsive images
