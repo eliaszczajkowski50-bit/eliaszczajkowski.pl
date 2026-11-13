@@ -20,6 +20,7 @@
   gtag('config',GA4_ID);
   const googleTag=document.createElement('script');
   googleTag.async=true;
+  googleTag.fetchPriority='low';
   googleTag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(ADS_ID);
   document.head.appendChild(googleTag);
 
@@ -122,21 +123,24 @@
     panel.id='privacy-settings-panel';
     panel.setAttribute('role','dialog');
     panel.setAttribute('aria-modal','true');
-    panel.setAttribute('aria-label','Ustawienia prywatności');
+    panel.setAttribute('aria-labelledby','privacy-dialog-title');
     panel.setAttribute('aria-hidden','true');
     panel.style.cssText='display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,28,52,.44);padding:20px;align-items:flex-end;justify-content:center';
-    panel.innerHTML='<div style="width:min(620px,100%);max-height:calc(100dvh - 40px);overflow-y:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px rgba(10,28,52,.24);font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;color:#172033"><div style="display:flex;gap:18px;align-items:flex-start;justify-content:space-between"><div><h2 style="margin:0 0 8px;font-size:22px">Ustawienia prywatności</h2><p style="margin:0;color:#596579;line-height:1.55">Strona korzysta z Google Analytics 4 i Google Ads do pomiaru ruchu oraz skuteczności reklam. Opcjonalne przechowywanie danych analitycznych i marketingowych pozostaje wyłączone do czasu Twojej zgody.</p></div><button type="button" data-privacy-close aria-label="Zamknij" style="border:0;background:#eef3f8;border-radius:10px;width:36px;height:36px;font-size:22px;cursor:pointer">×</button></div><div style="margin-top:18px;padding:14px 16px;border:1px solid #e3e8ef;border-radius:12px"><strong>Niezbędne technologie</strong><div style="margin-top:4px;color:#596579;font-size:14px">Aktywne — obsługa strony, formularza i bezpieczeństwa.</div></div><div style="margin-top:10px;padding:14px 16px;border:1px solid #e3e8ef;border-radius:12px"><strong>Analityka i marketing</strong><div style="margin-top:4px;color:#596579;font-size:14px">Google Analytics 4, Google Ads i Consent Mode. Możesz wyrazić zgodę albo pozostać przy ustawieniu bez opcjonalnego przechowywania danych.</div></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button type="button" data-consent-deny style="border:1px solid #cfd8e4;background:#fff;color:#172033;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer">Tylko niezbędne</button><button type="button" data-consent-grant style="border:0;background:#2f75e8;color:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer">Zgadzam się</button></div><p style="margin:16px 0 0;font-size:14px"><a href="polityka-prywatnosci.html" style="color:#2f75e8">Zobacz pełną Politykę prywatności i cookies</a></p></div>';
+    panel.innerHTML="<div style=\"width:min(480px,100%);max-height:calc(100dvh - 28px);overflow-y:auto;background:#fff;border-radius:18px;padding:20px;box-shadow:0 24px 70px rgba(10,28,52,.24);font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:#172033\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:12px\"><h2 id=\"privacy-dialog-title\" style=\"margin:0;font-size:20px\">Ustawienia prywatności</h2><button type=\"button\" data-privacy-close aria-label=\"Zamknij\" style=\"border:0;background:#eef3f8;border-radius:10px;width:44px;height:44px;cursor:pointer;font-size:23px\">×</button></div><p style=\"font-size:14px;line-height:1.55;color:#596579;margin:12px 0 16px\">Używamy Google Analytics 4 i Google Ads do pomiaru ruchu i skuteczności reklam. Opcjonalne dane analityczne i reklamowe pozostają wyłączone, dopóki nie wyrazisz zgody. Wybór możesz zmienić później.</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><button type=\"button\" data-consent-deny style=\"flex:1 1 180px;min-height:48px;border:1px solid #abb9cc;background:#fff;color:#172033;border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer\">Tylko niezbędne</button><button type=\"button\" data-consent-grant style=\"flex:1 1 180px;min-height:48px;border:1px solid #2f75e8;background:#2f75e8;color:#fff;border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer\">Wyrażam zgodę</button></div><p style=\"margin:14px 0 0;font-size:13px\"><a href=\"polityka-prywatnosci.html\" style=\"color:#1f5ec7;text-decoration:underline\">Polityka prywatności i cookies</a></p></div>";
 
     const openPrivacy=()=>{panel.style.display='flex';panel.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';};
     const closePrivacy=()=>{panel.style.display='none';panel.setAttribute('aria-hidden','true');document.body.style.overflow='';};
     button.addEventListener('click',openPrivacy);
     panel.addEventListener('click',e=>{
-      if(e.target===panel||e.target.closest('[data-privacy-close]')) closePrivacy();
+      if(e.target===panel||e.target.closest('[data-privacy-close]')) {applyConsent(false);closePrivacy();}
       if(e.target.closest('[data-consent-grant]')){applyConsent(true);closePrivacy();}
       if(e.target.closest('[data-consent-deny]')){applyConsent(false);closePrivacy();}
     });
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.getAttribute('aria-hidden')==='false') closePrivacy();});
-    document.body.append(button,panel);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.getAttribute('aria-hidden')==='false'){applyConsent(false);closePrivacy();}});
+    const footerRow=document.querySelector('.footer-row');
+    if(footerRow) footerRow.appendChild(button);
+    else document.body.appendChild(button);
+    document.body.appendChild(panel);
     if(savedConsent!== 'granted' && savedConsent!=='denied') setTimeout(openPrivacy,500);
   }
 })();
