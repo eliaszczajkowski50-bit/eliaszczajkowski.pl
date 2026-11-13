@@ -22,7 +22,22 @@
   googleTag.async=true;
   googleTag.fetchPriority='low';
   googleTag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(ADS_ID);
-  document.head.appendChild(googleTag);
+  // The tag is queued synchronously, but its network download starts after
+  // the browser can paint the page. Consent Mode and queued events are preserved.
+  let googleTagLoaded=false;
+  const loadGoogleTag=()=>{
+    if(googleTagLoaded)return;
+    googleTagLoaded=true;
+    document.head.appendChild(googleTag);
+  };
+  if(document.visibilityState==='hidden'){
+    setTimeout(loadGoogleTag,500);
+  }else if(typeof requestAnimationFrame==='function'){
+    requestAnimationFrame(()=>requestAnimationFrame(loadGoogleTag));
+    setTimeout(loadGoogleTag,1500);
+  }else{
+    setTimeout(loadGoogleTag,0);
+  }
 
   const applyConsent=(granted)=>{
     gtag('consent','update',{
