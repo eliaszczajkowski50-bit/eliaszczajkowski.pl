@@ -12,3 +12,16 @@
 .hero-photo picture{display:block;width:100%;height:100%}
 
 .quick-contact{display:grid;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.22)}.quick-contact a{color:#fff;font-size:14px;font-weight:700;text-decoration:underline;text-decoration-color:rgba(255,255,255,.4);text-underline-offset:3px}.quick-contact a:hover{text-decoration-color:#fff}
+
+/* Mobile usability: keep anchored headings clear of sticky navigation and give touch targets breathing room. */
+html{scroll-padding-top:88px}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #2f75e8;outline-offset:3px}
+@media(max-width:640px){
+ .hero-copy{padding:40px 0 36px}
+ .hero p{font-size:16px;line-height:1.65}
+ .hero h1{font-size:40px}
+ .hero .actions .btn{min-height:48px}
+ .nav-toggle,.nav>.btn{min-height:44px}
+ .modal-card{max-height:calc(100dvh - 24px)}
+ .modal-card .btn-primary{min-height:48px}
+}
