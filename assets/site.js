@@ -37,11 +37,54 @@
   if(savedConsent==='granted') applyConsent(true);
   if(savedConsent==='denied') applyConsent(false);
 
+
+  // Responsive navigation
+  const nav=document.querySelector('.main-nav');
+  if(nav){
+    nav.id='primary-nav';
+    const toggle=document.createElement('button');
+    toggle.className='nav-toggle';toggle.type='button';
+    toggle.textContent='Menu';
+    toggle.setAttribute('aria-label','Otwórz menu');
+    toggle.setAttribute('aria-controls','primary-nav');
+    toggle.setAttribute('aria-expanded','false');
+    nav.before(toggle);
+    const closeNav=()=>{nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');};
+    toggle.addEventListener('click',()=>{const shown=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(shown));});
+    nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeNav));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
+  }
+
+  // Track interest separately from confirmed enquiries; never send form contents.
+  document.addEventListener('click',e=>{
+    const link=e.target.closest('a[href]');if(!link)return;
+    const href=link.getAttribute('href')||'';
+    if(href.startsWith('tel:')) gtag('event','contact_phone_click',{page_path:location.pathname});
+    if(href.startsWith('mailto:')) gtag('event','contact_email_click',{page_path:location.pathname});
+  });
+  if(location.pathname.endsWith('/dziekuje.html')){
+    try{
+      const sent=Number(sessionStorage.getItem('contact_submit_pending')||0);
+      sessionStorage.removeItem('contact_submit_pending');
+      if(sent && Date.now()-sent < 10*60*1000 && Date.now()>=sent){
+        gtag('event','generate_lead',{method:'contact_form'});
+      }
+    }catch(e){}
+  }
+  // Preserve non-identifying UTM parameters when someone moves between pages.
+  try{
+    const params=new URLSearchParams(location.search);
+    const keys=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+    const utm={};
+    keys.forEach(k=>{const value=params.get(k);if(value)utm[k]=value.slice(0,180);});
+    if(Object.keys(utm).length)sessionStorage.setItem('site_utm',JSON.stringify(utm));
+  }catch(e){}
+
   const modal=document.getElementById('contact-modal');
   if(modal){
     const openers=document.querySelectorAll('[data-contact-open]');
     const closers=modal.querySelectorAll('[data-contact-close]');
-    const open=()=>{modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(()=>modal.querySelector('input')?.focus(),50)};
+    const open=()=>{gtag('event','contact_form_open',{page_path:location.pathname});modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(()=>modal.querySelector('input')?.focus(),50)};
     const close=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';};
     openers.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();open()}));
     closers.forEach(b=>b.addEventListener('click',close));
@@ -50,6 +93,8 @@
     const form=modal.querySelector('form');
     if(form){
       const params=new URLSearchParams(location.search);
+      try{const stored=JSON.parse(sessionStorage.getItem('site_utm')||'{}');Object.entries(stored).forEach(([key,value])=>{if(!params.has(key))params.set(key,value);});}catch(e){}
+      form.addEventListener('submit',()=>{if(!form.checkValidity())return;try{sessionStorage.setItem('contact_submit_pending',String(Date.now()));}catch(e){}gtag('event','contact_form_submit_attempt',{page_path:location.pathname});});
       const labels={utm_source:'Źródło kampanii',utm_medium:'Medium kampanii',utm_campaign:'Kampania',utm_term:'Hasło kampanii',utm_content:'Treść reklamy',gclid:'Google Click ID'};
       Object.entries(labels).forEach(([key,label])=>{
         const value=params.get(key);
@@ -64,15 +109,6 @@
   document.querySelectorAll('.consent span').forEach(span=>{
     span.innerHTML='Zapoznałem się z <a href="polityka-prywatnosci.html" target="_blank" rel="noopener" style="color:#2f75e8">Polityką prywatności</a>. Dane zostaną wykorzystane wyłącznie do obsługi mojego zgłoszenia.';
   });
-
-  const seoLinks={
-    'uslugi.html#wycena-firmy':'wycena-firmy.html',
-    'uslugi.html#aktywa-niematerialne':'wycena-znaku-towarowego.html',
-    'uslugi.html#analiza-finansowa':'analiza-finansowa.html',
-    'uslugi.html#finanse-w-sporcie':'finanse-w-sporcie.html',
-    'uslugi.html#wycena-klubow-sportowych':'wycena-klubow-sportowych.html'
-  };
-  document.querySelectorAll('a[href]').forEach(a=>{if(seoLinks[a.getAttribute('href')]) a.setAttribute('href',seoLinks[a.getAttribute('href')]);});
 
   if(!document.getElementById('privacy-settings-button')){
     const button=document.createElement('button');
